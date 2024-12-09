@@ -96,12 +96,14 @@ module buttom() {
 
 module length_wall() {
     difference() {
-        // Create unit height as tabs
-        for ( i = [0:BIN_HEIGHT_UNITS-1] ) {
-            translate([i % 2 * THICKNESS,i * GRID_HEIGHT,0])
-            square([BIN_LENGTH - THICKNESS + LASER_SIZE,GRID_HEIGHT + LASER_SIZE]);
-        }  
-    
+        union() {
+            // Create unit height as tabs
+            for ( i = [0:BIN_HEIGHT_UNITS-1] ) {
+                translate([i % 2 * THICKNESS,i * GRID_HEIGHT,0])
+                square([BIN_LENGTH - THICKNESS + LASER_SIZE,GRID_HEIGHT + LASER_SIZE]);
+            }  
+        }
+        
         // Cuts for the buttom Tabs
         for ( i = [0:BIN_LENGTH_UNITS-1] ) {
             translate([i*GRID_SIZE,0,0]){
@@ -122,18 +124,16 @@ module length_wall() {
 }
 
 module width_wall() {
-    /*for ( i = [0:BIN_HEIGHT_UNITS-1] ) {
-        translate([i % 2 * THICKNESS,i * GRID_HEIGHT,0])
-        square([BIN_WIDTH - THICKNESS + LASER_SIZE,GRID_HEIGHT + LASER_SIZE]);
-    } */
    
     difference() {
-        // Create unit height as tabs
-        for ( i = [0:BIN_HEIGHT_UNITS-1] ) {
-            translate([i % 2 * THICKNESS,i * GRID_HEIGHT,0])
-            square([BIN_WIDTH - THICKNESS + LASER_SIZE,GRID_HEIGHT + LASER_SIZE]);
-        }  
-    
+        union() {
+            // Create unit height as tabs
+            for ( i = [0:BIN_HEIGHT_UNITS-1] ) {
+                translate([i % 2 * THICKNESS,i * GRID_HEIGHT,0])
+                square([BIN_WIDTH - THICKNESS + LASER_SIZE,GRID_HEIGHT + LASER_SIZE]);
+            }  
+        }
+        
         // Cuts for the buttom Tabs
         for ( i = [0:BIN_WIDTH_UNITS-1] ) {
             translate([i*GRID_SIZE,0,0]){
@@ -152,6 +152,7 @@ module width_wall() {
         }
     } 
 }
+
 
 length_wall();
 translate([BIN_LENGTH_UNITS*GRID_SIZE+PART_SPACING,0,0])
