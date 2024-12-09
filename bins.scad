@@ -1,7 +1,7 @@
-
-
-
-
+/*
+Author: Samuel Hafen
+Description: Laser cuttable Bins Generator, for use with gridfinity standart
+*/
 
 /* [Bin] */
 
@@ -12,16 +12,12 @@ BIN_WIDTH_UNITS = 1;
 // Length of your bin in Units
 BIN_LENGTH_UNITS = 1;
 
-
-
-
 /* [Material] */
 
 // Thickness of the material
 THICKNESS = 2;
 // Size of the cut
 LASER_SIZE = 0.1;
-
 
 /* [Gridfinity] */
 
@@ -31,7 +27,6 @@ TOLERANCE = 0.5;
 GRID_SIZE = 42;
 // Height spacing
 GRID_HEIGHT = 7;
-
 
 // This size is the bin, without the base 
 BIN_HEIGHT = BIN_HEIGHT_UNITS * GRID_HEIGHT - THICKNESS;
@@ -43,7 +38,17 @@ BIN_BUTTOM_TAB = GRID_SIZE / 7;
 
 module base() {
     BASE_SIZE = GRID_SIZE - THICKNESS*2 - TOLERANCE*2;
-    square(BASE_SIZE);
+    //square(BASE_SIZE);
+    
+    for ( x = [0:BIN_LENGTH_UNITS-1] ) {
+        translate([x*GRID_SIZE,0,0]) {
+            for ( y = [0:BIN_WIDTH_UNITS-1] ) {
+                translate([0,y*GRID_SIZE,0]) {
+                    square(BASE_SIZE);
+                }
+            }
+        }
+    }
 }
 
 module buttom() {
@@ -81,20 +86,40 @@ module buttom() {
             }
         }
     }
+    
+    // Fill
+    translate([THICKNESS, THICKNESS])
+    square([BIN_LENGTH - THICKNESS*2, BIN_WIDTH - THICKNESS*2]);
 }
 
-module wall() {
+module length_wall() {
+    for ( i = [0:BIN_HEIGHT_UNITS-1] ) {
+        translate([i % 2 * THICKNESS,i * GRID_HEIGHT,0])
+        square([BIN_LENGTH - THICKNESS + LASER_SIZE,GRID_HEIGHT + LASER_SIZE]);
+    }  
+}
+
+module width_wall() {
     for ( i = [0:BIN_HEIGHT_UNITS-1] ) {
         translate([i % 2 * THICKNESS,i * GRID_HEIGHT,0])
         square([BIN_WIDTH - THICKNESS + LASER_SIZE,GRID_HEIGHT + LASER_SIZE]);
-    }
-    
+    }  
 }
 
-wall();
+length_wall();
+translate([BIN_LENGTH_UNITS*GRID_SIZE+20,0,0])
+length_wall();
+
+translate([-20,-BIN_WIDTH_UNITS*GRID_SIZE-20,0])
+rotate(90)
+width_wall();
+
+translate([-BIN_HEIGHT-40,-BIN_WIDTH_UNITS*GRID_SIZE-20,0])
+rotate(90)
+width_wall();
 
 translate([0,-BIN_WIDTH_UNITS*GRID_SIZE-20,0])
 buttom();
 
-translate([-60,0,0])
+translate([BIN_LENGTH_UNITS*GRID_SIZE+20,-BIN_WIDTH_UNITS*GRID_SIZE-20,0])
 base();
