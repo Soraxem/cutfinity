@@ -19,7 +19,7 @@ THICKNESS = 2;
 // Size of the cut
 LASER_SIZE = 0.1;
 
-/* [Gridfinity] */
+/* [Hidden] */
 
 // Spacing between the bins
 TOLERANCE = 0.5;
@@ -27,6 +27,8 @@ TOLERANCE = 0.5;
 GRID_SIZE = 42;
 // Height spacing
 GRID_HEIGHT = 7;
+// Space between parts
+PART_SPACING = 5;
 
 // This size is the bin, without the base 
 BIN_HEIGHT = BIN_HEIGHT_UNITS * GRID_HEIGHT - THICKNESS;
@@ -73,7 +75,7 @@ module buttom() {
     // Width Tabs
     for ( i = [0:BIN_WIDTH_UNITS-1] ) {
         translate([0,i*GRID_SIZE,0]){
-            // Create tabs inside grig of 7
+            // Create tabs inside grid of 7
             translate([0,BIN_BUTTOM_TAB*2,0])
             square([BIN_LENGTH, BIN_BUTTOM_TAB]);
             translate([0,BIN_BUTTOM_TAB*4,0])
@@ -93,33 +95,78 @@ module buttom() {
 }
 
 module length_wall() {
-    for ( i = [0:BIN_HEIGHT_UNITS-1] ) {
-        translate([i % 2 * THICKNESS,i * GRID_HEIGHT,0])
-        square([BIN_LENGTH - THICKNESS + LASER_SIZE,GRID_HEIGHT + LASER_SIZE]);
-    }  
+    difference() {
+        // Create unit height as tabs
+        for ( i = [0:BIN_HEIGHT_UNITS-1] ) {
+            translate([i % 2 * THICKNESS,i * GRID_HEIGHT,0])
+            square([BIN_LENGTH - THICKNESS + LASER_SIZE,GRID_HEIGHT + LASER_SIZE]);
+        }  
+    
+        // Cuts for the buttom Tabs
+        for ( i = [0:BIN_LENGTH_UNITS-1] ) {
+            translate([i*GRID_SIZE,0,0]){
+                // Create cuts inside grid of 7
+                translate([BIN_BUTTOM_TAB*2, 0,0])
+                square([BIN_BUTTOM_TAB, THICKNESS]);
+                translate([BIN_BUTTOM_TAB*4, 0,0])
+                square([BIN_BUTTOM_TAB, THICKNESS]);
+            
+                // Create big cuts, if there will be a next iteration
+                if ( BIN_LENGTH_UNITS-1 > i ) {
+                    translate([BIN_BUTTOM_TAB*6, 0,0])
+                    square([BIN_BUTTOM_TAB*2, THICKNESS]);
+                }
+            }
+        }
+    }
 }
 
 module width_wall() {
-    for ( i = [0:BIN_HEIGHT_UNITS-1] ) {
+    /*for ( i = [0:BIN_HEIGHT_UNITS-1] ) {
         translate([i % 2 * THICKNESS,i * GRID_HEIGHT,0])
         square([BIN_WIDTH - THICKNESS + LASER_SIZE,GRID_HEIGHT + LASER_SIZE]);
-    }  
+    } */
+   
+    difference() {
+        // Create unit height as tabs
+        for ( i = [0:BIN_HEIGHT_UNITS-1] ) {
+            translate([i % 2 * THICKNESS,i * GRID_HEIGHT,0])
+            square([BIN_WIDTH - THICKNESS + LASER_SIZE,GRID_HEIGHT + LASER_SIZE]);
+        }  
+    
+        // Cuts for the buttom Tabs
+        for ( i = [0:BIN_WIDTH_UNITS-1] ) {
+            translate([i*GRID_SIZE,0,0]){
+                // Create cuts inside grid of 7
+                translate([BIN_BUTTOM_TAB*2, 0,0])
+                square([BIN_BUTTOM_TAB, THICKNESS]);
+                translate([BIN_BUTTOM_TAB*4, 0,0])
+                square([BIN_BUTTOM_TAB, THICKNESS]);
+            
+                // Create big cuts, if there will be a next iteration
+                if ( BIN_WIDTH_UNITS-1 > i ) {
+                    translate([BIN_BUTTOM_TAB*6, 0,0])
+                    square([BIN_BUTTOM_TAB*2, THICKNESS]);
+                }
+            }
+        }
+    } 
 }
 
 length_wall();
-translate([BIN_LENGTH_UNITS*GRID_SIZE+20,0,0])
+translate([BIN_LENGTH_UNITS*GRID_SIZE+PART_SPACING,0,0])
 length_wall();
 
-translate([-20,-BIN_WIDTH_UNITS*GRID_SIZE-20,0])
+translate([-PART_SPACING,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
 rotate(90)
 width_wall();
 
-translate([-BIN_HEIGHT-40,-BIN_WIDTH_UNITS*GRID_SIZE-20,0])
+translate([-BIN_HEIGHT-PART_SPACING*2,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
 rotate(90)
 width_wall();
 
-translate([0,-BIN_WIDTH_UNITS*GRID_SIZE-20,0])
+translate([0,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
 buttom();
 
-translate([BIN_LENGTH_UNITS*GRID_SIZE+20,-BIN_WIDTH_UNITS*GRID_SIZE-20,0])
+translate([BIN_LENGTH_UNITS*GRID_SIZE+PART_SPACING,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
 base();
