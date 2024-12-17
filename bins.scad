@@ -3,6 +3,13 @@ Author: Samuel Hafen
 Description: Laser cuttable Bins Generator, for use with gridfinity standart
 */
 
+/* [View] */
+
+// View the Model in 3D
+3D_VIEW = false;
+// Explosion View of you Bins
+3D_EXPLODED = false;
+
 /* [Bin] */
 
 // Height of your bin in Units
@@ -15,7 +22,7 @@ BIN_LENGTH_UNITS = 1;
 /* [Material] */
 
 // Thickness of the material
-THICKNESS = 2;
+THICKNESS = 3;
 // Size of the cut
 LASER_SIZE = 0.1;
 
@@ -29,6 +36,8 @@ GRID_SIZE = 42;
 GRID_HEIGHT = 7;
 // Space between parts
 PART_SPACING = 5;
+// Factor for Expolosion
+3D_EXPLOSION_FACTOR = 3D_EXPLODED ? 10:0;
 
 // This size is the bin, without the base 
 BIN_HEIGHT = BIN_HEIGHT_UNITS * GRID_HEIGHT - THICKNESS;
@@ -37,7 +46,7 @@ BIN_LENGTH = BIN_LENGTH_UNITS * GRID_SIZE - TOLERANCE;
 
 BIN_BUTTOM_TAB = GRID_SIZE / 7;
 
-
+//Base is Correct
 module base() {
     BASE_SIZE = GRID_SIZE - THICKNESS*2 - TOLERANCE*2;
     //square(BASE_SIZE);
@@ -46,6 +55,8 @@ module base() {
         translate([x*GRID_SIZE,0,0]) {
             for ( y = [0:BIN_WIDTH_UNITS-1] ) {
                 translate([0,y*GRID_SIZE,0]) {
+                    
+                    translate([THICKNESS+TOLERANCE,THICKNESS+TOLERANCE,0])
                     square(BASE_SIZE);
                 }
             }
@@ -176,8 +187,23 @@ module 2d_view() {
 
 }
 
-translate([0,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
-buttom();
+module 3d_view() {
+    translate([-BIN_LENGTH_UNITS*GRID_SIZE/2, -BIN_WIDTH_UNITS*GRID_SIZE/2,0])
+    linear_extrude(THICKNESS)
+    buttom();
+    
+    color("green")
+    translate([0,0,-3D_EXPLOSION_FACTOR])
+    translate([-BIN_LENGTH_UNITS*GRID_SIZE/2, -BIN_WIDTH_UNITS*GRID_SIZE/2,-THICKNESS])
+    linear_extrude(THICKNESS)
+    base();
+}
 
-translate([BIN_LENGTH_UNITS*GRID_SIZE+PART_SPACING,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
-base();
+
+if ( 3D_VIEW ) {
+    3d_view();
+} else {
+    //2d_view();
+    translate([-BIN_LENGTH_UNITS*GRID_SIZE/2, -BIN_WIDTH_UNITS*GRID_SIZE/2,-THICKNESS])
+    base();
+}
