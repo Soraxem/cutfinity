@@ -154,17 +154,27 @@ module width_wall() {
 }
 
 
-length_wall();
-translate([BIN_LENGTH_UNITS*GRID_SIZE+PART_SPACING,0,0])
-length_wall();
+module 2d_view() {
 
-translate([-PART_SPACING,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
-rotate(90)
-width_wall();
+    length_wall();
+    translate([BIN_LENGTH_UNITS*GRID_SIZE+PART_SPACING,0,0])
+    length_wall();
 
-translate([-BIN_HEIGHT-PART_SPACING*2,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
-rotate(90)
-width_wall();
+    translate([-PART_SPACING,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
+    rotate(90)
+    width_wall();
+
+    translate([-BIN_HEIGHT-PART_SPACING*2,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
+    rotate(90)
+    width_wall();
+
+    translate([0,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
+    buttom();
+
+    translate([BIN_LENGTH_UNITS*GRID_SIZE+PART_SPACING,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
+    base();
+
+}
 
 translate([0,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
 buttom();
