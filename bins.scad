@@ -49,20 +49,18 @@ BIN_LENGTH = BIN_LENGTH_UNITS * GRID_SIZE - TOLERANCE  + LASER_TOLERANCE;
 
 BASE_SIZE = GRID_SIZE - THICKNESS*2 - TOLERANCE*2 + LASER_TOLERANCE; //ideal is 35
 
-BIN_BUTTOM_TAB = GRID_SIZE / 7;
+
 
 //Base is Correct
 module base() {
-    BASE_SIZE = GRID_SIZE - THICKNESS*2 - TOLERANCE*2;
-    //square(BASE_SIZE);
-    
+    // Generate 1 Base per unit in each direction
     for ( x = [0:BIN_LENGTH_UNITS-1] ) {
         translate([x*GRID_SIZE,0,0]) {
             for ( y = [0:BIN_WIDTH_UNITS-1] ) {
                 translate([0,y*GRID_SIZE,0]) {
-                    
-                    translate([THICKNESS+TOLERANCE,THICKNESS+TOLERANCE,0])
-                    square(BASE_SIZE);
+                    // Put the base in the middle of the grid
+                    translate([GRID_SIZE/2,GRID_SIZE/2,0])
+                    square(BASE_SIZE, true);
                 }
             }
         }
@@ -71,43 +69,55 @@ module base() {
 
 module buttom() {
     
-    // Length Tabs
-    for ( i = [0:BIN_LENGTH_UNITS-1] ) {
-        translate([i*GRID_SIZE,0,0]){
-            // Create tabs inside grid of 7
-            translate([BIN_BUTTOM_TAB*2, 0,0])
-            square([BIN_BUTTOM_TAB, BIN_WIDTH]);
-            translate([BIN_BUTTOM_TAB*4, 0,0])
-            square([BIN_BUTTOM_TAB, BIN_WIDTH]);
+    // Part Specific Values
+    TAB_SPACING = GRID_SIZE / 7;
+    BIN_TAB = TAB_SPACING + LASER_TOLERANCE;
+    BIN_TAB_DOUBLE = TAB_SPACING * 2 + LASER_TOLERANCE;
+    
+    // Add tabs to Length
+    translate([TAB_SPACING / 2, BIN_WIDTH_UNITS * GRID_SIZE / 2, 0])
+    for ( x = [0:BIN_LENGTH_UNITS-1] ) {
+        translate([x * GRID_SIZE, 0, 0]) {
+            translate([TAB_SPACING * 2, 0, 0])
+            square([BIN_TAB, BIN_WIDTH], true);
+            
+            translate([TAB_SPACING * 4, 0, 0])
+            square([BIN_TAB, BIN_WIDTH], true);
             
             // Create the big tabs, if there will be a next iteration
-            if ( BIN_LENGTH_UNITS-1 > i ) {
-                translate([BIN_BUTTOM_TAB*6, 0,0])
-                square([BIN_BUTTOM_TAB*2, BIN_WIDTH]);
+            if ( BIN_LENGTH_UNITS-1 > x ) {
+                translate([TAB_SPACING * 6.5, 0, 0])
+                square([BIN_TAB_DOUBLE, BIN_WIDTH], true);
             }
         }
     }
     
-    // Width Tabs
-    for ( i = [0:BIN_WIDTH_UNITS-1] ) {
-        translate([0,i*GRID_SIZE,0]){
-            // Create tabs inside grid of 7
-            translate([0,BIN_BUTTOM_TAB*2,0])
-            square([BIN_LENGTH, BIN_BUTTOM_TAB]);
-            translate([0,BIN_BUTTOM_TAB*4,0])
-            square([BIN_LENGTH, BIN_BUTTOM_TAB]);
+    // Add Tabs to Width
+    translate([BIN_LENGTH_UNITS * GRID_SIZE / 2, TAB_SPACING / 2, 0])
+    for ( y = [0:BIN_WIDTH_UNITS-1] ) {
+        translate([0, y * GRID_SIZE, 0]) {
+            translate([0, TAB_SPACING * 2, 0])
+            square([BIN_LENGTH, BIN_TAB], true);
+        
+            translate([0, TAB_SPACING * 4, 0])
+            square([BIN_LENGTH, BIN_TAB], true);
             
             // Create the big tabs, if there will be a next iteration
-            if ( BIN_WIDTH_UNITS-1 > i ) {
-                translate([0,BIN_BUTTOM_TAB*6,0])
-                square([BIN_LENGTH, BIN_BUTTOM_TAB*2]);
+            if ( BIN_WIDTH_UNITS-1 > y ) {
+                translate([0, TAB_SPACING * 6.5, 0])
+                square([BIN_LENGTH, BIN_TAB_DOUBLE], true);
             }
         }
     }
     
-    // Fill
-    translate([THICKNESS, THICKNESS])
-    square([BIN_LENGTH - THICKNESS*2, BIN_WIDTH - THICKNESS*2]);
+    // Fill the area
+    translate([BIN_LENGTH_UNITS * GRID_SIZE / 2, BIN_WIDTH_UNITS * GRID_SIZE / 2, 0])
+    square([BIN_LENGTH - THICKNESS*2, BIN_WIDTH - THICKNESS*2], true);
+    
+}
+
+module wall( SIZE ) {
+    square(20);
 }
 
 module length_wall() {
@@ -193,15 +203,18 @@ module 2d_view() {
 }
 
 module 3d_view() {
-    translate([-BIN_LENGTH_UNITS*GRID_SIZE/2, -BIN_WIDTH_UNITS*GRID_SIZE/2,0])
+    translate([0,-BIN_WIDTH_UNITS*GRID_SIZE,0])
     linear_extrude(THICKNESS)
     buttom();
     
     color("green")
     translate([0,0,-3D_EXPLOSION_FACTOR])
-    translate([-BIN_LENGTH_UNITS*GRID_SIZE/2, -BIN_WIDTH_UNITS*GRID_SIZE/2,-THICKNESS])
+    translate([0,-BIN_WIDTH_UNITS*GRID_SIZE,-THICKNESS])
     linear_extrude(THICKNESS)
     base();
+    
+    linear_extrude(THICKNESS)
+    wall(BIN_LENGTH);
 }
 
 
