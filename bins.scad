@@ -49,6 +49,13 @@ BIN_LENGTH = BIN_LENGTH_UNITS * GRID_SIZE - TOLERANCE  + LASER_TOLERANCE;
 
 BASE_SIZE = GRID_SIZE - THICKNESS*2 - TOLERANCE*2 + LASER_TOLERANCE; //ideal is 35
 
+// Wall
+HEIGHT_TAB = GRID_HEIGHT + LASER_TOLERANCE;
+
+// Floor
+TAB_SPACING = GRID_SIZE / 7;
+BIN_TAB = TAB_SPACING + LASER_TOLERANCE;
+BIN_TAB_DOUBLE = TAB_SPACING * 2 + LASER_TOLERANCE;
 
 
 //Base is Correct
@@ -69,10 +76,7 @@ module base() {
 
 module buttom() {
     
-    // Part Specific Values
-    TAB_SPACING = GRID_SIZE / 7;
-    BIN_TAB = TAB_SPACING + LASER_TOLERANCE;
-    BIN_TAB_DOUBLE = TAB_SPACING * 2 + LASER_TOLERANCE;
+    
     
     // Add tabs to Length
     translate([TAB_SPACING / 2, BIN_WIDTH_UNITS * GRID_SIZE / 2, 0])
@@ -116,8 +120,37 @@ module buttom() {
     
 }
 
-module wall( SIZE ) {
-    square(20);
+module wall( SIZE, SIZE_UNITS ) {
+    
+    difference() {
+        union() {
+            translate([BIN_LENGTH_UNITS * GRID_SIZE / 2, GRID_HEIGHT / 2, 0]) {
+                // Creates tabs for each height Unit
+                for ( h = [0:BIN_HEIGHT_UNITS-1] ) {
+                    translate([ ( h % 2 ) ? -THICKNESS/2 : THICKNESS/2, h * GRID_HEIGHT,0])
+                    square([SIZE - THICKNESS, HEIGHT_TAB], true);
+                }
+            }
+        }   
+    
+        translate([TAB_SPACING / 2, THICKNESS/2 - LASER_TOLERANCE/2, 0])
+        for ( x = [0:SIZE_UNITS-1] ) {
+            translate([x * GRID_SIZE, 0, 0]) {
+                translate([TAB_SPACING * 2, 0, 0])
+                square([BIN_TAB - LASER_TOLERANCE*2, THICKNESS], true);
+            
+                translate([TAB_SPACING * 4, 0, 0])
+                square([BIN_TAB - LASER_TOLERANCE*2, THICKNESS], true);
+            
+                // Create the big tabs, if there will be a next iteration
+                if ( SIZE_UNITS-1 > x ) {
+                    translate([TAB_SPACING * 6.5, 0, 0])
+                    square([BIN_TAB_DOUBLE - LASER_TOLERANCE*2, THICKNESS], true);
+                }
+            }
+        }
+        
+    }
 }
 
 module length_wall() {
@@ -213,8 +246,9 @@ module 3d_view() {
     linear_extrude(THICKNESS)
     base();
     
+    color("pink")
     linear_extrude(THICKNESS)
-    wall(BIN_LENGTH);
+    wall(BIN_LENGTH, BIN_LENGTH_UNITS);
 }
 
 
