@@ -6,7 +6,7 @@ Description: Laser cuttable Bins Generator, for use with gridfinity standart
 /* [View] */
 
 // View the Model in 3D
-3D_VIEW = false;
+3D_VIEW = true;
 // Explosion View of you Bins
 3D_EXPLODED = false;
 
@@ -15,15 +15,15 @@ Description: Laser cuttable Bins Generator, for use with gridfinity standart
 // Height of your bin in Units
 BIN_HEIGHT_UNITS = 6;
 // Width of your bin in Units 
-BIN_WIDTH_UNITS = 1;
+BIN_WIDTH_UNITS = 2;
 // Length of your bin in Units
-BIN_LENGTH_UNITS = 1;
+BIN_LENGTH_UNITS = 3;
 
 /* [Material] */
 
 // Thickness of the material
 THICKNESS = 3;
-// Size of the cut
+// Size of the cut, not visible in 3D View
 LASER_SIZE = 0.2;
 
 // Real added Tolerance
@@ -40,7 +40,7 @@ GRID_HEIGHT = 7;
 // Space between parts
 PART_SPACING = 5;
 // Factor for Expolosion
-3D_EXPLOSION_FACTOR = 3D_EXPLODED ? 10*$t:0;
+3D_EXPLOSION_FACTOR = 3D_EXPLODED ? 20:0;
 
 // This size is the bin, without the base 
 BIN_HEIGHT = BIN_HEIGHT_UNITS * GRID_HEIGHT - THICKNESS;
@@ -124,7 +124,7 @@ module wall( SIZE, SIZE_UNITS ) {
     
     difference() {
         union() {
-            translate([BIN_LENGTH_UNITS * GRID_SIZE / 2, GRID_HEIGHT / 2, 0]) {
+            translate([SIZE_UNITS * GRID_SIZE / 2, GRID_HEIGHT / 2, 0]) {
                 // Creates tabs for each height Unit
                 for ( h = [0:BIN_HEIGHT_UNITS-1] ) {
                     translate([ ( h % 2 ) ? -THICKNESS/2 : THICKNESS/2, h * GRID_HEIGHT,0])
@@ -236,19 +236,40 @@ module 2d_view() {
 }
 
 module 3d_view() {
-    translate([0,-BIN_WIDTH_UNITS*GRID_SIZE,0])
+    translate([-BIN_LENGTH_UNITS*GRID_SIZE/2,-BIN_WIDTH_UNITS*GRID_SIZE/2,0])
     linear_extrude(THICKNESS)
     buttom();
     
     color("green")
     translate([0,0,-3D_EXPLOSION_FACTOR])
-    translate([0,-BIN_WIDTH_UNITS*GRID_SIZE,-THICKNESS])
+    translate([-BIN_LENGTH_UNITS*GRID_SIZE/2,-BIN_WIDTH_UNITS*GRID_SIZE/2,-THICKNESS])
     linear_extrude(THICKNESS)
     base();
     
     color("pink")
+    translate([-BIN_LENGTH_UNITS*GRID_SIZE/2, BIN_WIDTH/2 + 3D_EXPLOSION_FACTOR, 0])
+    rotate([90,0,0])
     linear_extrude(THICKNESS)
     wall(BIN_LENGTH, BIN_LENGTH_UNITS);
+    
+    color("pink")
+    translate([BIN_LENGTH_UNITS*GRID_SIZE/2, -BIN_WIDTH/2 - 3D_EXPLOSION_FACTOR, 0])
+    rotate([90,0,180])
+    linear_extrude(THICKNESS)
+    wall(BIN_LENGTH, BIN_LENGTH_UNITS);
+    
+    
+    color("violet")
+    translate([-BIN_LENGTH/2 - 3D_EXPLOSION_FACTOR, -BIN_WIDTH_UNITS*GRID_SIZE/2, 0])
+    rotate([90,0,90])
+    linear_extrude(THICKNESS)
+    wall(BIN_WIDTH, BIN_WIDTH_UNITS);
+    
+    color("violet")
+    translate([BIN_LENGTH/2 + 3D_EXPLOSION_FACTOR, BIN_WIDTH_UNITS*GRID_SIZE/2, 0])
+    rotate([90,0,-90])
+    linear_extrude(THICKNESS)
+    wall(BIN_WIDTH, BIN_WIDTH_UNITS);
 }
 
 
