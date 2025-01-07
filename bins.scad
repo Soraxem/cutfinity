@@ -6,7 +6,7 @@ Description: Laser cuttable Bins Generator, for use with gridfinity standart
 /* [View] */
 
 // View the Model in 3D
-3D_VIEW = true;
+3D_VIEW = false;
 // Explosion View of you Bins
 3D_EXPLODED = false;
 
@@ -38,7 +38,7 @@ GRID_SIZE = 42;
 // Height spacing
 GRID_HEIGHT = 7;
 // Space between parts
-PART_SPACING = 5;
+PART_SPACING = 2;
 // Factor for Expolosion
 3D_EXPLOSION_FACTOR = 3D_EXPLODED ? 20:0;
 
@@ -153,85 +153,26 @@ module wall( SIZE, SIZE_UNITS ) {
     }
 }
 
-module length_wall() {
-    difference() {
-        union() {
-            // Create unit height as tabs
-            for ( i = [0:BIN_HEIGHT_UNITS-1] ) {
-                translate([i % 2 * THICKNESS,i * GRID_HEIGHT,0])
-                square([BIN_LENGTH - THICKNESS + LASER_SIZE,GRID_HEIGHT + LASER_SIZE]);
-            }  
-        }
-        
-        // Cuts for the buttom Tabs
-        for ( i = [0:BIN_LENGTH_UNITS-1] ) {
-            translate([i*GRID_SIZE,0,0]){
-                // Create cuts inside grid of 7
-                translate([BIN_BUTTOM_TAB*2, 0,0])
-                square([BIN_BUTTOM_TAB, THICKNESS]);
-                translate([BIN_BUTTOM_TAB*4, 0,0])
-                square([BIN_BUTTOM_TAB, THICKNESS]);
-            
-                // Create big cuts, if there will be a next iteration
-                if ( BIN_LENGTH_UNITS-1 > i ) {
-                    translate([BIN_BUTTOM_TAB*6, 0,0])
-                    square([BIN_BUTTOM_TAB*2, THICKNESS]);
-                }
-            }
-        }
-    }
-}
-
-module width_wall() {
-   
-    difference() {
-        union() {
-            // Create unit height as tabs
-            for ( i = [0:BIN_HEIGHT_UNITS-1] ) {
-                translate([i % 2 * THICKNESS,i * GRID_HEIGHT,0])
-                square([BIN_WIDTH - THICKNESS + LASER_SIZE,GRID_HEIGHT + LASER_SIZE]);
-            }  
-        }
-        
-        // Cuts for the buttom Tabs
-        for ( i = [0:BIN_WIDTH_UNITS-1] ) {
-            translate([i*GRID_SIZE,0,0]){
-                // Create cuts inside grid of 7
-                translate([BIN_BUTTOM_TAB*2, 0,0])
-                square([BIN_BUTTOM_TAB, THICKNESS]);
-                translate([BIN_BUTTOM_TAB*4, 0,0])
-                square([BIN_BUTTOM_TAB, THICKNESS]);
-            
-                // Create big cuts, if there will be a next iteration
-                if ( BIN_WIDTH_UNITS-1 > i ) {
-                    translate([BIN_BUTTOM_TAB*6, 0,0])
-                    square([BIN_BUTTOM_TAB*2, THICKNESS]);
-                }
-            }
-        }
-    } 
-}
-
-
 module 2d_view() {
-
-    length_wall();
-    translate([BIN_LENGTH_UNITS*GRID_SIZE+PART_SPACING,0,0])
-    length_wall();
-
-    translate([-PART_SPACING,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
-    rotate(90)
-    width_wall();
-
-    translate([-BIN_HEIGHT-PART_SPACING*2,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
-    rotate(90)
-    width_wall();
-
-    translate([0,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
-    buttom();
-
-    translate([BIN_LENGTH_UNITS*GRID_SIZE+PART_SPACING,-BIN_WIDTH_UNITS*GRID_SIZE-PART_SPACING,0])
+    
+    translate([0,-BIN_WIDTH_UNITS*GRID_SIZE - PART_SPACING,0])
     base();
+    
+    buttom();
+    
+    translate([0,BIN_WIDTH_UNITS*GRID_SIZE + PART_SPACING,0])
+    wall(BIN_LENGTH, BIN_LENGTH_UNITS);
+    
+    translate([0,BIN_WIDTH_UNITS*GRID_SIZE + BIN_HEIGHT + PART_SPACING*4,0])
+    wall(BIN_LENGTH, BIN_LENGTH_UNITS);
+    
+    translate([-PART_SPACING,0,0])
+    rotate(90)
+    wall(BIN_WIDTH, BIN_WIDTH_UNITS);
+    
+    translate([-PART_SPACING,-BIN_WIDTH_UNITS*GRID_SIZE - PART_SPACING,0])
+    rotate(90)
+    wall(BIN_WIDTH, BIN_WIDTH_UNITS);
 
 }
 
