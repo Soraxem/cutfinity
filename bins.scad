@@ -217,7 +217,5 @@ module 3d_view() {
 if ( 3D_VIEW ) {
     3d_view();
 } else {
-    //2d_view();
-    translate([-BIN_LENGTH_UNITS*GRID_SIZE/2, -BIN_WIDTH_UNITS*GRID_SIZE/2,-THICKNESS])
-    base();
+    2d_view();
 }
