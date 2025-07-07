@@ -51,9 +51,8 @@ BIN_HEIGHT = BIN_HEIGHT_UNITS * GRID_HEIGHT - THICKNESS;
 BIN_WIDTH = BIN_WIDTH_UNITS * GRID_SIZE - TOLERANCE + LASER_TOLERANCE;
 BIN_LENGTH = BIN_LENGTH_UNITS * GRID_SIZE - TOLERANCE  + LASER_TOLERANCE;
 
-// The Size of a base connector
+// The Size of a Base
 BASE_SIZE = GRID_SIZE - THICKNESS*2 - TOLERANCE - BASE_TOLERANCE*2  + LASER_TOLERANCE;
-
 
 
 // Wall
@@ -74,7 +73,21 @@ module base() {
                 translate([0,y*GRID_SIZE,0]) {
                     // Put the base in the middle of the grid
                     translate([GRID_SIZE/2,GRID_SIZE/2,0])
-                    square(BASE_SIZE, true);
+                    difference() {
+                        square(BASE_SIZE, true);
+                        
+                        // Connectors
+                        translate([0, 8,0])
+                        square(THICKNESS*2 + LASER_TOLERANCE, true);
+                        translate([0, -8,0])
+                        square(THICKNESS*2 + LASER_TOLERANCE, true);
+                        
+                        // Connector holes
+                        translate([10, 0,0])
+                        square([THICKNESS, THICKNESS*2 - LASER_TOLERANCE], true);
+                        translate([-10, 0,0])
+                        square([THICKNESS, THICKNESS*2 - LASER_TOLERANCE], true);
+                    }
                 }
             }
         }
@@ -83,7 +96,9 @@ module base() {
 
 module buttom() {
     
+    difference() {
     
+    union() {
     
     // Add tabs to Length
     translate([TAB_SPACING / 2, BIN_WIDTH_UNITS * GRID_SIZE / 2, 0])
@@ -124,6 +139,28 @@ module buttom() {
     // Fill the area
     translate([BIN_LENGTH_UNITS * GRID_SIZE / 2, BIN_WIDTH_UNITS * GRID_SIZE / 2, 0])
     square([BIN_LENGTH - THICKNESS*2, BIN_WIDTH - THICKNESS*2], true);
+    }
+    
+    // Generate 1 Base per unit in each direction
+    for ( x = [0:BIN_LENGTH_UNITS-1] ) {
+        translate([x*GRID_SIZE,0,0]) {
+            for ( y = [0:BIN_WIDTH_UNITS-1] ) {
+                translate([0,y*GRID_SIZE,0]) {
+                    // Put the base in the middle of the grid
+                    translate([GRID_SIZE/2,GRID_SIZE/2,0])
+                    union() {
+                        // Connector holes
+                        translate([10, 0,0])
+                        square([THICKNESS, THICKNESS*2 - LASER_TOLERANCE], true);
+                        translate([-10, 0,0])
+                        square([THICKNESS, THICKNESS*2 - LASER_TOLERANCE], true);
+                    }
+                }
+            }
+        }
+    }
+    
+    }
     
 }
 
