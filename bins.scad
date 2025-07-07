@@ -3,6 +3,7 @@ Author: Samuel Hafen
 Description: Laser cuttable Bins Generator, for use with gridfinity standart
 */
 
+
 /* [View] */
 
 // View the Model in 3D
@@ -30,9 +31,12 @@ LASER_SIZE = 0.2;
 LASER_TOLERANCE = 3D_VIEW ? 0:LASER_SIZE;
 
 /* [Hidden] */
+// These are the Advanced Settings, they only should be touched if you want to have a system that is incompatible to the Cutfinity sytem.
 
 // Spacing between the bins
 TOLERANCE = 0.5;
+// Spacing between base and bin wall
+BASE_TOLERANCE = 0.75;
 // Grid Spacing
 GRID_SIZE = 42;
 // Height spacing
@@ -47,7 +51,8 @@ BIN_HEIGHT = BIN_HEIGHT_UNITS * GRID_HEIGHT - THICKNESS;
 BIN_WIDTH = BIN_WIDTH_UNITS * GRID_SIZE - TOLERANCE + LASER_TOLERANCE;
 BIN_LENGTH = BIN_LENGTH_UNITS * GRID_SIZE - TOLERANCE  + LASER_TOLERANCE;
 
-BASE_SIZE = GRID_SIZE - THICKNESS*2 - TOLERANCE*2 + LASER_TOLERANCE; //ideal is 35
+// The Size of a base connector
+BASE_SIZE = GRID_SIZE - THICKNESS*2 - TOLERANCE*2 - BASE_TOLERANCE*2 + LASER_TOLERANCE;
 
 // Wall
 HEIGHT_TAB = GRID_HEIGHT + LASER_TOLERANCE;
