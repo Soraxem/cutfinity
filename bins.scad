@@ -25,7 +25,7 @@ BIN_LENGTH_UNITS = 3;
 // Thickness of the material
 THICKNESS = 3;
 // Size of the cut, not visible in 3D View
-LASER_SIZE = 0.2;
+LASER_SIZE = 0.250;
 
 // Real added Tolerance
 LASER_TOLERANCE = 3D_VIEW ? 0:LASER_SIZE;
@@ -34,7 +34,7 @@ LASER_TOLERANCE = 3D_VIEW ? 0:LASER_SIZE;
 // These are the Advanced Settings, they only should be touched if you want to have a system that is incompatible to the Cutfinity sytem.
 
 // Spacing between the bins
-TOLERANCE = 0.75;
+TOLERANCE = 1.25;
 // Spacing between base and bin wall
 BASE_TOLERANCE = 1;
 // Grid Spacing
